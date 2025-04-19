@@ -20,7 +20,11 @@ class ChecklistResource extends Resource
     protected static ?string $model = Checklist::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $modelLabel = 'Checklist';
+    protected static ?string $pluralModelLabel = 'Checklists';
+    protected static ?string $navigationLabel = 'Checklists';
+    protected static ?string $title = 'Checklists';
+    protected static ?int $navigationSort = 4;
     public static function form(Form $form): Form
     {
         return $form
@@ -68,5 +72,10 @@ class ChecklistResource extends Resource
         return [
             'index' => Pages\ManageChecklists::route('/'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CustomerResource\Pages;
 
 use App\Filament\Resources\CustomerResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCustomer extends EditRecord
@@ -16,4 +17,15 @@ class EditCustomer extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    
+
+    protected function getSavedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Cliente editado')
+            ->body('O cliente foi editado com sucesso.');
+    }
+
+
 }

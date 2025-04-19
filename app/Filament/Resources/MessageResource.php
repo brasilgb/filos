@@ -17,7 +17,7 @@ class MessageResource extends Resource
 {
     protected static ?string $model = Message::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $modelLabel = 'Mensagem';
     protected static ?string $pluralModelLabel = 'Mensagens';
@@ -83,5 +83,10 @@ class MessageResource extends Resource
         return [
             'index' => Pages\ManageMessages::route('/'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

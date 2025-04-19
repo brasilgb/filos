@@ -36,8 +36,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                     ->label('Configurações')
-                     ->icon('heroicon-o-adjustments-horizontal')
+                    ->label('Configurações')
+                    ->icon('heroicon-o-adjustments-horizontal')
                     ->collapsed(),
             ])
             ->sidebarWidth('20rem')
@@ -73,6 +73,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])->spa();
     }
 }

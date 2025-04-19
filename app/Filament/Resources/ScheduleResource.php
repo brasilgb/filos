@@ -17,7 +17,7 @@ class ScheduleResource extends Resource
 {
     protected static ?string $model = Schedule::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?string $modelLabel = 'Agendamento';
     protected static ?string $pluralModelLabel = 'Agendamentos';
@@ -101,5 +101,10 @@ class ScheduleResource extends Resource
         return [
             'index' => Pages\ManageSchedules::route('/'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

@@ -6,12 +6,19 @@ use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Leandrocfe\FilamentPtbrFormFields\Cep;
+use Leandrocfe\FilamentPtbrFormFields\Document;
+use Leandrocfe\FilamentPtbrFormFields\PhoneNumber;
 
 class CustomerResource extends Resource
 {
@@ -26,55 +33,103 @@ class CustomerResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('cpf')
-                    ->maxLength(50)
-                    ->default(null),
-                Forms\Components\DatePicker::make('birth'),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(50)
-                    ->default(null),
-                Forms\Components\TextInput::make('cep')
-                    ->maxLength(20)
-                    ->default(null),
-                Forms\Components\TextInput::make('uf')
-                    ->maxLength(20)
-                    ->default(null),
-                Forms\Components\TextInput::make('city')
-                    ->maxLength(50)
-                    ->default(null),
-                Forms\Components\TextInput::make('district')
-                    ->maxLength(50)
-                    ->default(null),
-                Forms\Components\TextInput::make('street')
-                    ->maxLength(20)
-                    ->default(null),
-                Forms\Components\TextInput::make('complement')
-                    ->maxLength(80)
-                    ->default(null),
-                Forms\Components\TextInput::make('number')
-                    ->numeric()
-                    ->default(null),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->maxLength(20)
-                    ->default(null),
-                Forms\Components\TextInput::make('contactname')
-                    ->maxLength(50)
-                    ->default(null),
-                Forms\Components\TextInput::make('whatsapp')
-                    ->maxLength(50)
-                    ->default(null),
-                Forms\Components\TextInput::make('contactphone')
-                    ->tel()
-                    ->maxLength(20)
-                    ->default(null),
+                Grid::make()->schema([
+                    Forms\Components\TextInput::make('cpf')
+                        ->label('CPF/CNPJ')
+                        ->extraAlpineAttributes(['x-mask:dynamic' => '$input.length >14 ? \'99.999.999/9999-99\' : \'999.999.999-99\''])
+                        ->rule('cpf_ou_cnpj')
+                        ->rules(['required']),
+                    Forms\Components\DatePicker::make('birth')
+                        ->label('Aniversário'),
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nome')
+                        ->maxLength(255)
+                        ->columnSpan(2)
+                        ->rules(['required']),
+                    Forms\Components\TextInput::make('email')
+                        ->label('E-mail')
+                        ->email()
+                        ->maxLength(50)
+                        ->default(null)
+                        ->columnSpan(2)
+                ])->columns(6),
+                Grid::make()->schema([
+                    Cep::make('cep')
+                        ->viaCep(
+                            mode: 'suffix', // Determines whether the action should be appended to (suffix) or prepended to (prefix) the cep field, or not included at all (none).
+                            errorMessage: 'CEP inválido.', // Error message to display if the CEP is invalid.
+
+                            /**
+                             * Other form fields that can be filled by ViaCep.
+                             * The key is the name of the Filament input, and the value is the ViaCep attribute that corresponds to it.
+                             * More information: https://viacep.com.br/
+                             */
+                            setFields: [
+                                'street' => 'logradouro',
+                                'number' => 'numero',
+                                'complement' => 'complemento',
+                                'district' => 'bairro',
+                                'city' => 'localidade',
+                                'state' => 'uf'
+                            ]
+                        ),
+                    Forms\Components\TextInput::make('state')
+                        ->label('UF')
+                        ->maxLength(20)
+                        ->default(null),
+                    Forms\Components\TextInput::make('city')
+                        ->label('Cidade')
+                        ->maxLength(50)
+                        ->default(null)
+                        ->columnSpan(2),
+                    Forms\Components\TextInput::make('district')
+                        ->label('Bairro')
+                        ->maxLength(50)
+                        ->default(null)
+                        ->columnSpan(2),
+                ])->columns(6),
+                Grid::make()->schema([
+                    Forms\Components\TextInput::make('street')
+                        ->label('Logradouro')
+                        ->maxLength(20)
+                        ->default(null)
+                        ->columnSpan(2),
+                    Forms\Components\TextInput::make('complement')
+                        ->label('Complemento')
+                        ->maxLength(80)
+                        ->default(null),
+                    Forms\Components\TextInput::make('number')
+                        ->label('Número')
+                        ->numeric()
+                        ->default(null),
+                ])->columns(4),
+                Grid::make()->schema([
+                    PhoneNumber::make('phone')
+                        ->label('Telefone')
+                        ->tel()
+                        ->maxLength(20)
+                        ->default(null)
+                        ->rules(['required']),
+                    Forms\Components\TextInput::make('contactname')
+                        ->label('Nome do contato')
+                        ->maxLength(50)
+                        ->default(null)
+                        ->columnSpan(2),
+                    Forms\Components\TextInput::make('whatsapp')
+                        ->label('Whatsapp')
+                        ->maxLength(50)
+                        ->default(null),
+                    PhoneNumber::make('contactphone')
+                        ->label('Telefone de contato')
+                        ->tel()
+                        ->maxLength(20)
+                        ->default(null),
+                ])->columns(5),
                 Forms\Components\Textarea::make('observations')
+                    ->label('Observações')
                     ->columnSpanFull(),
             ]);
     }
@@ -84,55 +139,39 @@ class CustomerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('#')
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('cpf')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('birth')
-                    ->date()
+                ->label('Cliente')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                ->label('E-mail')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('cep')
+                Tables\Columns\TextColumn::make('cpf')
+                ->label('CPF/CNPJ')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('uf')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('city')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('district')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('street')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('complement')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('number')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('contactname')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('whatsapp')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('contactphone')
+                ->label('Telefone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Cadastro')
+                    ->dateTime('d/m/Y')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->label(''),
+                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\DeleteAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Cliente deletado')
+                            ->body('O cliente foi deletado com sucesso.')
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -155,5 +194,10 @@ class CustomerResource extends Resource
             'create' => Pages\CreateCustomer::route('/create'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }
