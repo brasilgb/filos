@@ -18,7 +18,6 @@ class EditCustomer extends EditRecord
         ];
     }
     
-
     protected function getSavedNotification(): ?Notification
     {
         return Notification::make()
@@ -26,6 +25,5 @@ class EditCustomer extends EditRecord
             ->title('Cliente editado')
             ->body('O cliente foi editado com sucesso.');
     }
-
 
 }

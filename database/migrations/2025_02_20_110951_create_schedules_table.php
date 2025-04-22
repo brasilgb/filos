@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('schedules', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->primary()->index();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->id();
             $table->foreignId('customer_id')->nullable()->constrained()->onDelete('cascade');
             $table->dateTime('schedules');
             $table->string('service');
             $table->text('details');
             $table->tinyInteger('status')->default(1);
             $table->text('observations')->nullable();
+            $table->string('responsible_technician', 50)->nullable(); // tecnico
             $table->timestamps();
         });
     }

@@ -41,9 +41,10 @@ class CustomerResource extends Resource
                         ->label('CPF/CNPJ')
                         ->extraAlpineAttributes(['x-mask:dynamic' => '$input.length >14 ? \'99.999.999/9999-99\' : \'999.999.999-99\''])
                         ->rule('cpf_ou_cnpj')
-                        ->rules(['required']),
+                        ->rules(['required'])
+                        ->unique(ignoreRecord: true),
                     Forms\Components\DatePicker::make('birth')
-                        ->label('Aniversário'),
+                        ->label('Nascimento'),
                     Forms\Components\TextInput::make('name')
                         ->label('Nome')
                         ->maxLength(255)
@@ -55,9 +56,11 @@ class CustomerResource extends Resource
                         ->maxLength(50)
                         ->default(null)
                         ->columnSpan(2)
+                        ->unique(ignoreRecord: true)
                 ])->columns(6),
                 Grid::make()->schema([
                     Cep::make('cep')
+                    ->label('CEP')
                         ->viaCep(
                             mode: 'suffix', // Determines whether the action should be appended to (suffix) or prepended to (prefix) the cep field, or not included at all (none).
                             errorMessage: 'CEP inválido.', // Error message to display if the CEP is invalid.
@@ -163,7 +166,6 @@ class CustomerResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label(''),
                 Tables\Actions\EditAction::make()->label(''),
                 Tables\Actions\DeleteAction::make()->label('')
                     ->successNotification(

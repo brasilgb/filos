@@ -5,6 +5,14 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\OrderResource\RelationManagers;
+use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Leandrocfe\FilamentPtbrFormFields\Money;
 
 class EditOrder extends EditRecord
 {
@@ -15,5 +23,102 @@ class EditOrder extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Cliente editado')
+            ->body('A ordem foi editada com sucesso.');
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Grid::make()->schema([
+                    Forms\Components\TextInput::make('id')
+                        ->label('Nº OS')
+                        ->readOnly(),
+                    Forms\Components\Select::make('customer_id')
+                        ->label('Clientes')
+                        ->relationship("customer", "name")
+                        ->rules(['required'])
+                        ->columnSpan(2),
+                    Forms\Components\Select::make('equipment')
+                        ->label('Tipo de equipamento')
+                        ->options([
+                            1 => 'teste'
+                        ])->columnSpan(2)
+                        ->rules(['required'])
+                ])->columns(5),
+                Grid::make()->schema([
+                    Forms\Components\TextInput::make('model')
+                        ->label('Modelo')
+                        ->maxLength(50)
+                        ->columnSpan(2),
+                    Forms\Components\TextInput::make('password')
+                        ->label('Senha do equipamento')
+                        ->maxLength(50),
+                    Forms\Components\DatePicker::make('delivery_forecast')
+                        ->label('Previsão de entrega'),
+                ])->columns(4),
+                Grid::make()->schema([
+                    Forms\Components\Textarea::make('defect')
+                        ->label('Defeito relatado')
+                        ->rules(['required']),
+                    Forms\Components\Textarea::make('state_conservation')
+                        ->label('Estado de conservação'),
+                    Forms\Components\Textarea::make('accessories')
+                        ->label('Acessórios'),
+                ])->columns(3),
+                Grid::make()->schema([
+                    Forms\Components\Textarea::make('budget_description')
+                        ->label('Orçamento')
+                        ->columnSpan(2),
+                    Money::make('budget_value')
+                        ->label('Valor do orçamento'),
+                ])->columns(3),
+                Grid::make()->schema([
+                    Forms\Components\Textarea::make('services_performed')
+                        ->label('Serviço executado')
+                        ->columnSpan(2),
+                    Forms\Components\Textarea::make('parts')
+                        ->label('Peças adicionadas'),
+                ])->columns(3),
+                Grid::make()->schema([
+                    Money::make('parts_value')
+                        ->label('Valor das peças')
+                        ->default(0.00),
+                    Money::make('service_value')
+                        ->label('Valor do serviço')
+                        ->default(0.00),
+                    Money::make('service_cost')
+                        ->label('Custo total')
+                        ->default(0.00),
+                ])->columns(3),
+                Grid::make()->schema([
+                    Forms\Components\Select::make('responsible_technician')
+                        ->label('Técnico responsável')
+                        ->rules(['required'])
+                        ->options([
+                            '1' => 'Anderson',
+                            '2' => 'João',
+                            '3' => 'José',
+                        ]),
+                    Forms\Components\Select::make('service_status')
+                        ->label('Status')
+                        ->options([
+                            '1' => 'Ordem aberta',
+                            '2' => 'Orçamento gerado',
+                            '3' => 'Orçamento aprovado',
+                        ]),
+                ])->columns(2),
+
+                Forms\Components\Textarea::make('observations')
+                    ->label('Observações')
+                    ->columnSpan('full'),
+            ]);
     }
 }

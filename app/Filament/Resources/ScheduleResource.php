@@ -28,24 +28,33 @@ class ScheduleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->numeric()
-                    ->default(null),
-                Forms\Components\TextInput::make('customer_id')
-                    ->numeric()
-                    ->default(null),
+                Forms\Components\Select::make('customer_id')
+                    ->label('Clientes')
+                    ->relationship('customer', 'name')
+                    ->rules(['required']),
                 Forms\Components\DateTimePicker::make('schedules')
-                    ->required(),
+                    ->label('Horário da visita')
+                    ->rules(['required']),
                 Forms\Components\TextInput::make('service')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('details')
-                    ->required()
+                    ->label('Serviço requisitado')
+                    ->rules(['required'])
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
+                Forms\Components\Textarea::make('details')
+                    ->label('Detalhes do serviço')
+                    ->rules(['required'])
+                    ->columnSpanFull(),
+                Forms\Components\Select::make('user_id')
+                    ->label('Responsável técnico')
+                    ->relationship('user', 'name')
+                    ->rules(['required']),
+                Forms\Components\Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        '1' => 'Aberto',
+                        '2' => 'Em atendimento',
+                        '3' => 'Fechado',
+                    ])
+                    ->rules(['required']),
                 Forms\Components\Textarea::make('observations')
                     ->columnSpanFull(),
             ]);
@@ -56,31 +65,19 @@ class ScheduleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
+                    ->label('Nº Agendamento')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('schedules')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('service')
+                ->label('Cliente')
+                    ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('schedules')
+                ->label('Horário da visita')
+                    ->dateTime("d/m/Y H:i:s"),
+                Tables\Columns\TextColumn::make('responsible_technician')
+                ->label('Responsável técnico'),
                 Tables\Columns\TextColumn::make('status')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ->label('Status'),
             ])
             ->filters([
                 //
