@@ -82,8 +82,9 @@ class CreateOrder extends CreateRecord
                     Forms\Components\Textarea::make('budget_description')
                         ->label('Pré-orçamento')
                         ->columnSpan(2),
-                    Money::make('budget_value')
+                    Forms\Components\TextInput::make('budget_value')
                         ->label('Valor do pré-orçamento')
+                        ->prefix('R$')
                         ->default('0'),
                     Forms\Components\Select::make('service_status')
                         ->label('Status')

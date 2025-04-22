@@ -60,7 +60,7 @@ class CustomerResource extends Resource
                 ])->columns(6),
                 Grid::make()->schema([
                     Cep::make('cep')
-                    ->label('CEP')
+                        ->label('CEP')
                         ->viaCep(
                             mode: 'suffix', // Determines whether the action should be appended to (suffix) or prepended to (prefix) the cep field, or not included at all (none).
                             errorMessage: 'CEP inválido.', // Error message to display if the CEP is invalid.
@@ -116,15 +116,15 @@ class CustomerResource extends Resource
                         ->maxLength(20)
                         ->default(null)
                         ->rules(['required']),
+                    Forms\Components\TextInput::make('whatsapp')
+                        ->label('Whatsapp')
+                        ->maxLength(50)
+                        ->default(null),
                     Forms\Components\TextInput::make('contactname')
                         ->label('Nome do contato')
                         ->maxLength(50)
                         ->default(null)
                         ->columnSpan(2),
-                    Forms\Components\TextInput::make('whatsapp')
-                        ->label('Whatsapp')
-                        ->maxLength(50)
-                        ->default(null),
                     PhoneNumber::make('contactphone')
                         ->label('Telefone de contato')
                         ->tel()
@@ -145,17 +145,17 @@ class CustomerResource extends Resource
                     ->label('#')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('name')
-                ->label('Cliente')
+                    ->label('Cliente')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                ->label('E-mail')
+                    ->label('E-mail')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cpf')
-                ->label('CPF/CNPJ')
+                    ->label('CPF/CNPJ')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
-                ->label('Telefone')
+                    ->label('Telefone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Cadastro')

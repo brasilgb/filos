@@ -9,6 +9,8 @@ use App\Filament\Resources\OrderResource\RelationManagers;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -90,12 +92,19 @@ class EditOrder extends EditRecord
                 Grid::make()->schema([
                     Money::make('parts_value')
                         ->label('Valor das peças')
-                        ->default(0.00),
+                        ->default(0.00)
+                        ->live(onBlur: true)
+                        ->numeric()
+                        ->afterStateUpdated(fn(Get $get, Set $set) => Self::calculateTotals($get, $set)),
                     Money::make('service_value')
                         ->label('Valor do serviço')
-                        ->default(0.00),
+                        ->default(0.00)
+                        ->live(onBlur: true)
+                        ->numeric()
+                        ->afterStateUpdated(fn(Get $get, Set $set) => Self::calculateTotals($get, $set)),
                     Money::make('service_cost')
                         ->label('Custo total')
+                        ->readOnly()
                         ->default(0.00),
                 ])->columns(3),
                 Grid::make()->schema([
@@ -120,5 +129,18 @@ class EditOrder extends EditRecord
                     ->label('Observações')
                     ->columnSpan('full'),
             ]);
+    }
+
+
+    public static function calculateTotals(Get $get, Set $set): void
+    {
+        $pecas = $get('parts_value');
+        $servico = $get('parts_value');
+        $pecas = str_replace(['.', ','], ['', '.'], $pecas);
+        $servico = str_replace(['.', ','], ['', '.'], $servico);
+        
+        $pecas = (float) $pecas;
+        $servico = (float) $servico;
+        $set('service_cost', $pecas + $servico);
     }
 }
