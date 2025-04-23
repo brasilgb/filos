@@ -3,15 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MessageResource\Pages;
-use App\Filament\Resources\MessageResource\RelationManagers;
 use App\Models\Message;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class MessageResource extends Resource
 {
@@ -23,23 +21,29 @@ class MessageResource extends Resource
     protected static ?string $pluralModelLabel = 'Mensagens';
     protected static ?string $navigationLabel = 'Mensagens';
     protected static ?int $navigationSort = 4;
-    
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('sender_id')
-                    ->numeric()
-                    ->default(null),
-                Forms\Components\TextInput::make('recipient_id')
-                    ->maxLength(255)
-                    ->default(null),
+                Forms\Components\Hidden::make('id')
+                    ->default(Message::latest()->first() ? Message::latest()->first()->id + 1 : 1),
+                Forms\Components\Select::make('sender_id')
+                    ->label('Remetente')
+                    ->options([
+                        Auth::user()->id => Auth::user()->name,
+                    ])
+                    ->rules(['required']),
+                Forms\Components\Select::make('recipient_id')
+                    ->label('Destinatário')
+                    ->relationship("user", "name")
+                    ->rules(['required']),
                 Forms\Components\Textarea::make('message')
-                    ->required()
+                    ->label('Mensagem')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->numeric()
-                    ->default(null),
+                Forms\Components\Toggle::make('status')
+                    ->label('Status')
+                    ->default(true),
             ]);
     }
 
@@ -47,22 +51,17 @@ class MessageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('sender_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('recipient_id')
+                Tables\Columns\TextColumn::make("Auth::user()->name")
+                    ->label('Remetente'),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Destinatário')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->numeric()
+                Tables\Columns\ToggleColumn::make('status')
+                    ->label('Status')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->filters([
                 //

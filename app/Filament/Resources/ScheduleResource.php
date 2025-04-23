@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ScheduleResource\Pages;
-use App\Filament\Resources\ScheduleResource\RelationManagers;
 use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ScheduleResource extends Resource
 {
@@ -28,6 +25,8 @@ class ScheduleResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Hidden::make('id')
+                    ->default(Schedule::latest()->first() ? Schedule::latest()->first()->id + 1 : 1),
                 Forms\Components\Select::make('customer_id')
                     ->label('Clientes')
                     ->relationship('customer', 'name')
@@ -68,16 +67,16 @@ class ScheduleResource extends Resource
                     ->label('Nº Agendamento')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer_id')
-                ->label('Cliente')
+                    ->label('Cliente')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('schedules')
-                ->label('Horário da visita')
+                    ->label('Horário da visita')
                     ->dateTime("d/m/Y H:i:s"),
                 Tables\Columns\TextColumn::make('responsible_technician')
-                ->label('Responsável técnico'),
+                    ->label('Responsável técnico'),
                 Tables\Columns\TextColumn::make('status')
-                ->label('Status'),
+                    ->label('Status'),
             ])
             ->filters([
                 //

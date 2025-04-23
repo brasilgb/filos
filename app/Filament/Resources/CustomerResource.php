@@ -3,21 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
-use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Leandrocfe\FilamentPtbrFormFields\Cep;
-use Leandrocfe\FilamentPtbrFormFields\Document;
 use Leandrocfe\FilamentPtbrFormFields\PhoneNumber;
 
 class CustomerResource extends Resource
@@ -37,6 +31,8 @@ class CustomerResource extends Resource
         return $form
             ->schema([
                 Grid::make()->schema([
+                    Forms\Components\Hidden::make('id')
+                        ->default(Customer::latest()->first() ? Customer::latest()->first()->id + 1 : 1),
                     Forms\Components\TextInput::make('cpf')
                         ->label('CPF/CNPJ')
                         ->extraAlpineAttributes(['x-mask:dynamic' => '$input.length >14 ? \'99.999.999/9999-99\' : \'999.999.999-99\''])

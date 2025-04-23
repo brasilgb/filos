@@ -5,15 +5,12 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Resources\OrderResource\RelationManagers;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Leandrocfe\FilamentPtbrFormFields\Money;
 
 class EditOrder extends EditRecord
@@ -90,22 +87,24 @@ class EditOrder extends EditRecord
                         ->label('Peças adicionadas'),
                 ])->columns(3),
                 Grid::make()->schema([
-                    Money::make('parts_value')
+                     Forms\Components\TextInput::make('parts_value')
                         ->label('Valor das peças')
-                        ->default(0.00)
+                        ->prefix('R$')
                         ->live(onBlur: true)
-                        ->numeric()
-                        ->afterStateUpdated(fn(Get $get, Set $set) => Self::calculateTotals($get, $set)),
-                    Money::make('service_value')
+                        ->afterStateUpdated(function (Get $get, Set $set) {
+                            self::updateTotals($get, $set);
+                        }),
+                     Forms\Components\TextInput::make('service_value')
                         ->label('Valor do serviço')
-                        ->default(0.00)
+                        ->prefix('R$')
                         ->live(onBlur: true)
-                        ->numeric()
-                        ->afterStateUpdated(fn(Get $get, Set $set) => Self::calculateTotals($get, $set)),
-                    Money::make('service_cost')
+                        ->afterStateUpdated(function (Get $get, Set $set) {
+                            self::updateTotals($get, $set);
+                        }),
+                     Forms\Components\TextInput::make('service_cost')
                         ->label('Custo total')
+                        ->prefix('R$')
                         ->readOnly()
-                        ->default(0.00),
                 ])->columns(3),
                 Grid::make()->schema([
                     Forms\Components\Select::make('responsible_technician')
@@ -131,16 +130,12 @@ class EditOrder extends EditRecord
             ]);
     }
 
-
-    public static function calculateTotals(Get $get, Set $set): void
+    public static function updateTotals(Get $get, Set $set): void
     {
-        $pecas = $get('parts_value');
-        $servico = $get('parts_value');
-        $pecas = str_replace(['.', ','], ['', '.'], $pecas);
-        $servico = str_replace(['.', ','], ['', '.'], $servico);
-        
-        $pecas = (float) $pecas;
-        $servico = (float) $servico;
-        $set('service_cost', $pecas + $servico);
+        // $padraoAmericanoParts   = str_replace(['.', ','], ['', '.'], $get('parts_value'));
+        // $padraoAmericanoServico = str_replace(['.', ','], ['', '.'], $get('service_value'));
+        // $padraoAmericanoTotal   = $get('parts_value') + $get('service_value');
+        // dd($get('parts_value'));
+        $set('service_cost', $get('parts_value') + $get('service_value') );
     }
 }
