@@ -51,7 +51,8 @@ class MessageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("Auth::user()->name")
+                Tables\Columns\TextColumn::make(Auth::user()->id)
+                    ->default(Auth::user()->name)
                     ->label('Remetente'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Destinatário')
