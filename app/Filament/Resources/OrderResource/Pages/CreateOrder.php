@@ -26,7 +26,7 @@ class CreateOrder extends CreateRecord
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'Cliente criado com sucesso!';
+        return 'Ordem criado com sucesso!';
     }
 
     protected function getCreatedNotification(): ?Notification

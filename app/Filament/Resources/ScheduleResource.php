@@ -6,6 +6,7 @@ use App\Filament\Resources\ScheduleResource\Pages;
 use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -82,8 +83,20 @@ class ScheduleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Agendamento editado')
+                            ->body('O agendamento foi editado com sucesso.')
+                    ),
+                Tables\Actions\DeleteAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Agendamento deletado')
+                            ->body('O agendamento foi deletado com sucesso.')
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

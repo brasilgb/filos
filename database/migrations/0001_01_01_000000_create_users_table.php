@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('telephone')->nullable();
             $table->string('whatsapp')->nullable();
             $table->string('password');
-            $table->tinyInteger('feedback')->default(0);
+            $table->tinyInteger('roles')->default(1); // 1-Administrador, 2-Usuário, 3-Técnico
             $table->boolean('is_admin')->default(0);
             $table->boolean('is_active')->default(1);
             $table->timestamp('email_verified_at')->nullable();

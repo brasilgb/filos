@@ -162,7 +162,13 @@ class CustomerResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\EditAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Cliente editado')
+                            ->body('O cliente foi editado com sucesso.')
+                    ),
                 Tables\Actions\DeleteAction::make()->label('')
                     ->successNotification(
                         Notification::make()

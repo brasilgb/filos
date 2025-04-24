@@ -6,6 +6,7 @@ use App\Filament\Resources\ChecklistResource\Pages;
 use App\Models\Checklist;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -27,9 +28,11 @@ class ChecklistResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('equipmenttype')
+                    ->label('Tipo de equipamento')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('checklist')
+                    ->label('Checklist')
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -40,22 +43,34 @@ class ChecklistResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('equipmenttype')
+                    ->label('Tipo de equipamento')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('checklist')
+                    ->label('Checklist')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criação')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Checklist editado')
+                            ->body('O checklist foi editado com sucesso.')
+                    ),
+                Tables\Actions\DeleteAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Checklist deletado')
+                            ->body('O checklist foi deletado com sucesso.')
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

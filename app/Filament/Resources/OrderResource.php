@@ -59,13 +59,19 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\EditAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Ordem editada')
+                            ->body('A ordem foi editado com sucesso.')
+                    ),
                 Tables\Actions\DeleteAction::make()->label('')
                     ->successNotification(
                         Notification::make()
                             ->success()
                             ->title('Ordem deletada')
-                            ->body('A ordem foi deletada com sucesso.')
+                            ->body('A ordem foi deletado com sucesso.')
                     ),
             ])
             ->bulkActions([

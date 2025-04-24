@@ -6,6 +6,7 @@ use App\Filament\Resources\MessageResource\Pages;
 use App\Models\Message;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -56,20 +57,33 @@ class MessageResource extends Resource
                     ->label('Remetente'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Destinatário')
-                    ->searchable(),
-                Tables\Columns\ToggleColumn::make('status')
-                    ->label('Status')
+                    ->searchable()
                     ->sortable(),
+                Tables\Columns\ToggleColumn::make('status')
+                    ->label('Status'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Cadastro')
+                    ->dateTime('y/m/Y')
                     ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Mensagem editada')
+                            ->body('A mensagem foi editada com sucesso.')
+                    ),
+                Tables\Actions\DeleteAction::make()->label('')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Mensagem deletada')
+                            ->body('A mensagem foi deletada com sucesso.')
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
