@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ScheduleResource\Pages;
 use App\Models\Schedule;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -63,21 +64,24 @@ class ScheduleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('Nº Agendamento')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('customer_id')
-                    ->label('Cliente')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('schedules')
-                    ->label('Horário da visita')
-                    ->dateTime("d/m/Y H:i:s"),
-                Tables\Columns\TextColumn::make('responsible_technician')
-                    ->label('Responsável técnico'),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status'),
+            ->schema([
+                Section::make()
+                    ->columns([
+                        Tables\Columns\TextColumn::make('id')
+                            ->label('Nº Agendamento')
+                            ->sortable(),
+                        Tables\Columns\TextColumn::make('customer_id')
+                            ->label('Cliente')
+                            ->sortable()
+                            ->searchable(),
+                        Tables\Columns\TextColumn::make('schedules')
+                            ->label('Horário da visita')
+                            ->dateTime("d/m/Y H:i:s"),
+                        Tables\Columns\TextColumn::make('responsible_technician')
+                            ->label('Responsável técnico'),
+                        Tables\Columns\TextColumn::make('status')
+                            ->label('Status'),
+                    ]),
             ])
             ->filters([
                 //

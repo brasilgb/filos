@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ChecklistResource\Pages;
 use App\Models\Checklist;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -27,14 +28,17 @@ class ChecklistResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('equipmenttype')
-                    ->label('Tipo de equipamento')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('checklist')
-                    ->label('Checklist')
-                    ->required()
-                    ->columnSpanFull(),
+                Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('equipmenttype')
+                            ->label('Tipo de equipamento')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('checklist')
+                            ->label('Checklist')
+                            ->required()
+                            ->columnSpanFull(),
+                    ])
             ]);
     }
 

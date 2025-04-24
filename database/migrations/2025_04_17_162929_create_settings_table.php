@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('setting_pages', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->text('generatedbudget')->nullable(); // Messages whatapp
             $table->text('servicecompleted')->nullable(); // Messages whatapp
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('setting_pages');
+        Schema::dropIfExists('settings');
     }
 };

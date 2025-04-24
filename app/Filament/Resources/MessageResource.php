@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MessageResource\Pages;
 use App\Models\Message;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -27,24 +28,27 @@ class MessageResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Hidden::make('id')
-                    ->default(Message::latest()->first() ? Message::latest()->first()->id + 1 : 1),
-                Forms\Components\Select::make('sender_id')
-                    ->label('Remetente')
-                    ->options([
-                        Auth::user()->id => Auth::user()->name,
-                    ])
-                    ->rules(['required']),
-                Forms\Components\Select::make('recipient_id')
-                    ->label('Destinatário')
-                    ->relationship("user", "name")
-                    ->rules(['required']),
-                Forms\Components\Textarea::make('message')
-                    ->label('Mensagem')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('status')
-                    ->label('Status')
-                    ->default(true),
+                Section::make()
+                    ->schema([
+                        Forms\Components\Hidden::make('id')
+                            ->default(Message::latest()->first() ? Message::latest()->first()->id + 1 : 1),
+                        Forms\Components\Select::make('sender_id')
+                            ->label('Remetente')
+                            ->options([
+                                Auth::user()->id => Auth::user()->name,
+                            ])
+                            ->rules(['required']),
+                        Forms\Components\Select::make('recipient_id')
+                            ->label('Destinatário')
+                            ->relationship("user", "name")
+                            ->rules(['required']),
+                        Forms\Components\Textarea::make('message')
+                            ->label('Mensagem')
+                            ->columnSpanFull(),
+                        Forms\Components\Toggle::make('status')
+                            ->label('Status')
+                            ->default(true),
+                    ]),
             ]);
     }
 

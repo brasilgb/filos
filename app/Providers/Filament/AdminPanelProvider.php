@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Models\SettingPage;
+use App\Models\Setting;
 use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -47,7 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarFullyCollapsibleOnDesktop()
             ->theme(asset('css/filament/admin/theme.css'))
             ->font('Poppins', provider: GoogleFontProvider::class)
-            ->brandLogo(fn() => view('filament.admin.logo', ['settings' => SettingPage::first()]))
+            ->brandLogo(fn() => view('filament.admin.logo', ['settings' => Setting::first()]))
             ->brandLogoHeight('3rem')
             ->favicon(asset('favicon.ico'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
