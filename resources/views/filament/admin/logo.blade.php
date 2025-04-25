@@ -2,8 +2,8 @@
     
     <div>
         <a href="/" class="p-0 m-0">
-            <img src="{{ asset('pernalonga.jpg') }}" width="50" height="40" />
-            {{-- <img src="{{ asset('storage/' . $settings->logo) }}" width="100" /> --}}
+            {{-- <img src="{{ asset('pernalonga.jpg') }}" width="50" height="40" /> --}}
+            <img src="{{ asset('storage/' . $company->logo) }}" width="50" />
         </a>
     </div>
     {{--<div class="pt-1 text-2xl font-bold dark:text-white">

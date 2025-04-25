@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->text('generatedbudget')->nullable(); // Messages whatapp
-            $table->text('servicecompleted')->nullable(); // Messages whatapp
-
             $table->text('receivingequipment')->nullable(); // Impressão de recibos recebimento de equipamento
             $table->text('equipmentdelivery')->nullable(); // Impressão de recibos entrega equipamento
             $table->text('budgetissuance')->nullable(); // Impressão de recibos emissão de orçamento
+            $table->text('generatedbudget')->nullable(); // Messages whatapp
+            $table->text('servicecompleted')->nullable(); // Messages whatapp
             $table->text('equipmenttype')->nullable(); // Select tipo de equipamento ordens de serviço
             $table->timestamps();
         });

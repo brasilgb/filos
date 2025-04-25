@@ -2,18 +2,15 @@
 
 namespace App\Providers\Filament;
 
-use App\Models\Setting;
+use App\Models\Company;
 use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -47,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarFullyCollapsibleOnDesktop()
             ->theme(asset('css/filament/admin/theme.css'))
             ->font('Poppins', provider: GoogleFontProvider::class)
-            ->brandLogo(fn() => view('filament.admin.logo', ['settings' => Setting::first()]))
+            ->brandLogo(fn() => view('filament.admin.logo', ['company' => Company::first()]))
             ->brandLogoHeight('3rem')
             ->favicon(asset('favicon.ico'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

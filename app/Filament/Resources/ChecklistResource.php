@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ChecklistResource\Pages;
 use App\Models\Checklist;
+use App\Models\Setting;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -26,17 +27,24 @@ class ChecklistResource extends Resource
     protected static ?int $navigationSort = 4;
     public static function form(Form $form): Form
     {
+        $typeEquipment = Setting::first()->equipmenttype;
+        $opcoesArray = explode(',', $typeEquipment);
+        $opcoesArray = array_map('trim', $opcoesArray);
+        $opcoesFormatadas = array_combine($opcoesArray, $opcoesArray);
+        // dd($dataequipment);
         return $form
             ->schema([
                 Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('equipmenttype')
+                        Forms\Components\Select::make('equipmenttype')
                             ->label('Tipo de equipamento')
-                            ->required()
-                            ->maxLength(255),
+                            ->options($opcoesFormatadas)
+                            ->helperText('Tipos de equipamentos descritos em recibos e mensagens.')
+                            ->rules(['required']),
                         Forms\Components\Textarea::make('checklist')
-                            ->label('Checklist')
-                            ->required()
+                            ->label('Checklist para o tipo de equipamento')
+                            ->rules(['required'])
+                            ->helperText('Checklist de acordo com o tipo de equipamento, separe por vírgula Ex.: botão liga/desliga, microfone, tela.')->required()
                             ->columnSpanFull(),
                     ])
             ]);
@@ -48,13 +56,14 @@ class ChecklistResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('equipmenttype')
                     ->label('Tipo de equipamento')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('checklist')
                     ->label('Checklist')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Criação')
-                    ->dateTime()
+                    ->label('Cadastro')
+                    ->dateTime("d/m/Y")
                     ->sortable(),
             ])
             ->filters([
