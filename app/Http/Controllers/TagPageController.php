@@ -11,4 +11,4 @@ class TagPageController extends Controller
         dd($dataForm);
         return view('filament.pages.print-tag', ['dataForm' => $dataForm]);
     }
-}
+} 

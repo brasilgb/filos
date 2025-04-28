@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Order;
 use App\Models\TagPage as ModelsTagPage;
 // use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -17,11 +18,18 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\URL;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Contracts\HasForms;
 
-class TagPage extends Page
+class TagPage extends Page implements HasForms
 {
     use InteractsWithForms;
     public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
 
     protected static ?string $navigationGroup = 'Configurações';
 
@@ -42,52 +50,50 @@ class TagPage extends Page
                 Section::make()
                     ->schema([
                         Grid::make()->schema([
-                            Forms\Components\TextInput::make('tag')
-                                ->label('Etiqueta')
-                                ->helperText('Texto da etiqueta'),
-                            Forms\Components\TextInput::make('tag2')
-                                ->label('Etiqueta 2')
-                                ->helperText('Texto da etiqueta 2'),
-                            Forms\Components\TextInput::make('tag3')
-                                ->label('Etiqueta 2')
-                                ->helperText('Texto da etiqueta 3')
+                            Forms\Components\TextInput::make('starting-order')
+                                ->label('Ordem inicial')
+                                ->default(Order::first()->id + 1)
+                                ->numeric()
+                                ->helperText('Oredem inicial para impressão'),
+                            Forms\Components\TextInput::make('number-pages')
+                                ->label('Número de página')
+                                ->default(1)
+                                ->live(true)
+                                ->helperText('Número de páginas com etiquetas a serem impressas')
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    self::tagsTotals($get, $set);
+                                }),
+                            Forms\Components\TextInput::make('ending-order')
+                                ->label('Ordem Final')
+                                ->default(Order::first()->id + 96)
+                                ->readOnly()
+                                ->helperText('Número de etiquetas a serem impressas')
                         ])->columns(3),
-                    ]),
-                // Actions::make([
-                //     Action::make('imprimir')
-                //         ->label('Imprime etiquetas0000')
-                //         ->icon('heroicon-o-printer')
-                //         ->url(function ($data) {
-                //             return route('printer-register', $data);
-                //         })
-                //         ->openUrlInNewTab()
-                // ]),
-            ]);
+                    ])
+            ])->statePath('data');
     }
 
+
+    public static function tagsTotals(Get $get, Set $set): void
+    {
+        $set('ending-order', (($get('starting-order') - 1) + 96) * $get('number-pages'));
+    }
+
+    //starting order, ending order, number of pages
     protected function getFormActions(): array
     {
         return [
-            Action::make('imprimir')
-                ->label('Imprime etiquetas')
+            Action::make('save')
+                ->label('Imprimir etiquetas')
                 ->icon('heroicon-o-printer')
-                ->url(function (array $data) {
-                    // app()->call('App\Http\Controllers\TagPageController@printTags', ['formData' => $data]);
-                    return route('printer-register', ['formData' => $data]);
-                })
-                ->openUrlInNewTab(),
+                ->openUrlInNewTab()
+                ->submit('save'),
         ];
     }
-    // ->url(fn ($record) => route('printer-register', ['record' => $record]))
-
-    // public function printTag(Get $get)
-    // {
-
-    //     $tags = [
-    //         'tag' => $get('tag'),
-    //         'tag2' => $get('tag2'),
-    //         'tag3' => $get('tag3'),
-    //     ];
-    //     return view('filament.pages.print-tag', compact($tags));
-    // }
+    public function save()
+    {
+        $formData = $this->form->getState();
+        $url = URL::route('printer-register', ['tagi' => $formData['starting-order'], 'tagf' => $formData['ending-order']]); // Passa os dados como array associativo
+        return redirect()->to($url);
+    }
 }
