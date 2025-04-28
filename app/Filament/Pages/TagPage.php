@@ -93,7 +93,7 @@ class TagPage extends Page implements HasForms
     public function save()
     {
         $formData = $this->form->getState();
-        $url = URL::route('printer-register', ['tagi' => $formData['starting-order'], 'tagf' => $formData['ending-order']]); // Passa os dados como array associativo
+        $url = URL::route('printer-register', ['tagi' => $formData['starting-order'], 'tagf' => $formData['ending-order'], 'nump' => $formData['number-pages']]); // Passa os dados como array associativo
         return redirect()->to($url);
     }
 }

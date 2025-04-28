@@ -11,11 +11,13 @@ class PrintTag extends Component
     public Company $company;
     public $tagi;
     public $tagf;
+    public $nump;
 
     public function mount(Company $company, Request $request)
     {
         $this->tagi = $request->query('tagi', null);
         $this->tagf = $request->query('tagf', null);
+        $this->nump = $request->query('nump', null);
         $this->company = $company;
     }
 
