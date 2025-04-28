@@ -10,7 +10,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
+use Filament\Tables\Table; 
 
 class ScheduleResource extends Resource
 {
@@ -64,8 +64,6 @@ class ScheduleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->schema([
-                Section::make()
                     ->columns([
                         Tables\Columns\TextColumn::make('id')
                             ->label('Nº Agendamento')
@@ -81,8 +79,7 @@ class ScheduleResource extends Resource
                             ->label('Responsável técnico'),
                         Tables\Columns\TextColumn::make('status')
                             ->label('Status'),
-                    ]),
-            ])
+                    ])
             ->filters([
                 //
             ])
