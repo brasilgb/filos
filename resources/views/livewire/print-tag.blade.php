@@ -1,18 +1,16 @@
-    <div class="bg-gray-white text-gray-600 container mx-auto shadow">
-        <a href="/admin/tag-page" class="print:hidden">
-            Fechar
-        </a>
-        <main class="w-[210mm] h-[297mm]">
-            <section class="w-full flex flex-row flex-wrap items-start grow-1 ml-[5.7mm] mt-[12.5mm] pb-[12.5mm]">
+    <div class="bg-gray-800 text-gray-600 mx-auto w-[210.1mm] h-[297mm]">
+      
+        <main class="ml-[5.7mm] mt-[12.5mm] bg-white">
+            <section class="w-full flex flex-row flex-wrap items-start grow-1">
                 @for ($x = $tagi; $x <= $tagf; $x++)
-                    <div class="w-[33mm] h-[17mm] py-[1.5mm] border flex flex-col items-center justify-start">
-                        <div class="text-xs">
+                    <div class="w-[33mm] h-[17mm] border border-gray-800 flex flex-col items-center justify-around">
+                        <div class="text-[8]">
                             {{ $company->shortname }}
                         </div>
-                        <div class="text-lg font-bold">
+                        <div class="text-[12] font-bold">
                             {{ $x }}
                         </div>
-                        <div class="text-sm">
+                        <div class="text-[8]">
                             {{ $company->telephone }}
                         </div>
                     </div>

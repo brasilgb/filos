@@ -9,17 +9,17 @@ use Livewire\Component;
 
 class PrintTag extends Component
 {
-    public Company $company;
+    public $company;
     public $tagi;
     public $tagf;
     public $nump;
 
-    public function mount(Company $company, Request $request)
+    public function mount(Request $request)
     {
         $this->tagi = $request->query('tagi', null);
         $this->tagf = $request->query('tagf', null);
         $this->nump = $request->query('nump', null);
-        $this->company = $company;
+        $this->company = Company::first();
     }
 
     public function render()
